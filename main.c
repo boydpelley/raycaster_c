@@ -31,7 +31,7 @@ void draw_player(SDL_Renderer *renderer)
     float line_end_y = player_center_y + line_length * sin(p_a);
 
     // Draw the line in front of the player
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red color for the line
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
     SDL_RenderDrawLine(renderer, player_center_x, player_center_y, line_end_x, line_end_y);
 }
 
