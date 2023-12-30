@@ -1,6 +1,10 @@
+#include <math.h>
+
 #include "SDL2/SDL.h"
 
-float px, py;
+#define PI 3.1415926535
+
+float px, py, p_d_x, p_d_y, p_a;
 
 void init()
 {
@@ -14,6 +18,19 @@ void draw_player(SDL_Renderer *renderer)
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     SDL_Rect player = {px, py, 8, 8};
     SDL_RenderFillRect(renderer, &player);
+
+    // Calculate the center of the player rectangle
+    float player_center_x = px + player.w / 2.0;
+    float player_center_y = py + player.h / 2.0;
+
+    // Calculate the endpoint of the line in front of the player
+    float line_length = 20;  // You can adjust the length of the line
+    float line_end_x = player_center_x + line_length * cos(p_a);
+    float line_end_y = player_center_y + line_length * sin(p_a);
+
+    // Draw the line in front of the player
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red color for the line
+    SDL_RenderDrawLine(renderer, player_center_x, player_center_y, line_end_x, line_end_y);
 }
 
 int map_x = 8;
@@ -103,22 +120,36 @@ short process_events(SDL_Window * window)
                     }
                     case SDLK_w:
                     {
-                        py -= 5;
+                        px += p_d_x * 5;
+                        py += p_d_y * 5;
                         break;
                     }
                     case SDLK_a:
                     {
-                        px -= 5;
+                        p_a -= 0.1;
+                        if (p_a < 0)
+                        {
+                            p_a += (2 * PI);
+                        }
+                        p_d_x = cos(p_a) * 5;
+                        p_d_y = sin(p_a) * 5;
                         break;
                     }
                     case SDLK_s:
                     {
-                        py += 5;
+                        px -= p_d_x * 5;
+                        py -= p_d_y * 5;
                         break;
                     }
                     case SDLK_d:
                     {
-                        px += 5;
+                        p_a += 0.1;
+                        if (p_a > (2 * PI))
+                        {
+                            p_a -= (2 * PI);
+                        }
+                        p_d_x = cos(p_a) * 5;
+                        p_d_y = sin(p_a) * 5;
                         break;
                     }
                 }
