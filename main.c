@@ -77,6 +77,54 @@ void draw_2D_map(SDL_Renderer *renderer)
 }
 
 
+void draw_rays_3D()
+{
+    int r, m_x, m_y, m_p, d_o_f;
+    float r_x, r_y, r_a, x_o, y_o;
+
+    r_a = p_a;
+    for (r = 0; r < 1; r++)
+    {
+        d_o_f = 0;
+        float a_tan = -1 / tan(r_a);
+        if (r_a > PI)
+        {
+            r_y = ( ( (int)py >> 6) << 6) - 0.0001;
+            r_x = (py - r_y) * a_tan + px;
+        }
+        if (r_a < PI)
+        {
+            r_y = ( ( (int)py >> 6) << 6) + 64;
+            r_x = (py - r_y) * a_tan + px;
+        }
+        if (r_a == 0 || r_a == PI)
+        {
+            r_x = px;
+            r_y = py;
+            d_o_f = 8;
+        }
+        while ( d_o_f < 8 )
+        {
+            m_x = (int) (r_x) >> 6;
+            m_y = (int) (r_y) >> 6;
+            m_p - m_y * map_x + m_x;
+            if ( m_p < map_x * map_y && map[m_p] == 1)
+            {
+                d_o_f = 8;
+            }
+            else
+            {
+                r_x += x_o;
+                r_y += y_o;
+                d_o_f += 1;
+            }
+
+        }
+    }
+}
+
+
+
 void render_screen(SDL_Renderer *renderer)
 {
     // Render a white screen
