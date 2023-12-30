@@ -1,0 +1,10 @@
+"C:\Program Files\JetBrains\CLion 2022.2.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2022.2.4/bin/ninja/win/ninja.exe" -G Ninja -S C:\Users\boydj\git\personal\raycaster_c -B C:\Users\boydj\git\personal\raycaster_c\cmake-build-debug
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found SDL2: mingw32;-mwindows;C:/Program Files/JetBrains/CLion 2022.2.4/bin/mingw/lib/libSDL2main.a;C:/Program Files/JetBrains/CLion 2022.2.4/bin/mingw/lib/libSDL2.dll.a  
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/boydj/git/personal/raycaster_c/cmake-build-debug

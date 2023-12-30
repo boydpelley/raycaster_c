@@ -1,0 +1,21 @@
+# ninja log v5
+1	305	7256025985300900	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+3	95	7256027194203491	raycaster_c.exe	c9226d63c7d987e6
+3	301	7256033159849886	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+301	392	7256033160716742	raycaster_c.exe	c9226d63c7d987e6
+2	295	7256033397225098	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+295	383	7256033398055339	raycaster_c.exe	c9226d63c7d987e6
+2	282	7256034241857796	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+282	367	7256034242681853	raycaster_c.exe	c9226d63c7d987e6
+3	275	7256036745397038	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+280	364	7256036746247257	raycaster_c.exe	c9226d63c7d987e6
+2	277	7256037759959991	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+277	370	7256037760845221	raycaster_c.exe	c9226d63c7d987e6
+3	371	7256038190314316	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+372	457	7256038191142626	raycaster_c.exe	c9226d63c7d987e6
+3	341	7256048819675368	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+342	435	7256048820567507	raycaster_c.exe	c9226d63c7d987e6
+3	279	7256049035312037	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+279	367	7256049036160441	raycaster_c.exe	c9226d63c7d987e6
+2	279	7256050309451084	CMakeFiles/raycaster_c.dir/main.c.obj	9a191f28d7c6b9b8
+280	361	7256050310231290	raycaster_c.exe	c9226d63c7d987e6

@@ -1,0 +1,58 @@
+The system is: Windows - 10.0.22621 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files/JetBrains/CLion 2022.2.4/bin/mingw/bin/gcc.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.exe"
+
+The C compiler identification is GNU, found in "C:/Users/boydj/git/personal/raycaster_c/cmake-build-debug/CMakeFiles/3.23.2/CompilerIdC/a.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: C:/Users/boydj/git/personal/raycaster_c/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/JetBrains/CLion 2022.2.4/bin/ninja/win/ninja.exe cmTC_126bb && [1/2] Building C object CMakeFiles/cmTC_126bb.dir/testCCompiler.c.obj
+[2/2] Linking C executable cmTC_126bb.exe
+
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: C:/Users/boydj/git/personal/raycaster_c/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/JetBrains/CLion 2022.2.4/bin/ninja/win/ninja.exe cmTC_951b7 && [1/2] Building C object CMakeFiles/cmTC_951b7.dir/CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_951b7.exe
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD succeeded with the following output:
+Change Dir: C:/Users/boydj/git/personal/raycaster_c/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/JetBrains/CLion 2022.2.4/bin/ninja/win/ninja.exe cmTC_d1642 && [1/2] Building C object CMakeFiles/cmTC_d1642.dir/src.c.obj
+[2/2] Linking C executable cmTC_d1642.exe
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
