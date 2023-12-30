@@ -10,6 +10,8 @@ void init()
 {
     px = 300;
     py = 300;
+    p_d_x = cos(p_a) * 5;
+    p_d_y = sin(p_a) * 5;
 }
 
 // The player will be represented by a little yellow rectangle
@@ -120,8 +122,8 @@ short process_events(SDL_Window * window)
                     }
                     case SDLK_w:
                     {
-                        px += p_d_x * 5;
-                        py += p_d_y * 5;
+                        px += p_d_x;
+                        py += p_d_y;
                         break;
                     }
                     case SDLK_a:
@@ -137,8 +139,8 @@ short process_events(SDL_Window * window)
                     }
                     case SDLK_s:
                     {
-                        px -= p_d_x * 5;
-                        py -= p_d_y * 5;
+                        px -= p_d_x;
+                        py -= p_d_y;
                         break;
                     }
                     case SDLK_d:
