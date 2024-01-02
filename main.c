@@ -3,6 +3,8 @@
 #include "SDL2/SDL.h"
 
 #define PI 3.1415926535
+#define P2 PI/2
+#define P3 3*PI/2
 
 float px, py, p_d_x, p_d_y, p_a;
 
@@ -103,7 +105,49 @@ void draw_rays_3D(SDL_Renderer *renderer)
             }
 
         }
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Red color for the line
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Green color for the line
+        SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
+
+        d_o_f = 0;
+        float n_tan = -tan(r_a);
+        if (r_a > P2 && r_a < P3)
+        {
+            r_x = ( ( (int)py >> 6) << 6) - 0.0001;
+            r_y = (px - r_x) * n_tan + py;
+            x_o = -64;
+            y_o = -x_o * n_tan;
+        }
+        if (r_a < P2 || r_a > P3)
+        {
+            r_x = ( ( (int)py >> 6) << 6) + 64;
+            r_y = (px - r_x) * n_tan + py;
+            x_o = 64;
+            y_o = -x_o * n_tan;
+        }
+        if (r_a == 0 || r_a == PI)
+        {
+            r_x = px;
+            r_y = py;
+            d_o_f = 8;
+        }
+        while ( d_o_f < 8 )
+        {
+            m_x = (int) (r_x) >> 6;
+            m_y = (int) (r_y) >> 6;
+            m_p = m_y * map_x + m_x;
+            if ( m_p < map_x * map_y && map[m_p] == 1)
+            {
+                d_o_f = 8;
+            }
+            else
+            {
+                r_x += x_o;
+                r_y += y_o;
+                d_o_f += 1;
+            }
+
+        }
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Green color for the line
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
     }
 }
