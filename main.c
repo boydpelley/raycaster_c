@@ -169,17 +169,16 @@ void draw_rays_3D(SDL_Renderer *renderer)
             c_a -= 2 * PI;
         }
         dis_t = dis_t * cos(c_a);
-        float line_h = (map_size * 320) / dis_t;
+        float line_h = ((float)map_size * 320) / dis_t;
         if (line_h > 320)
             line_h = 320;
         float line_o = 160 - line_h / 2;
 
         int rect_w = 8;
-        float rect_h = line_h;
         int x = r * 8 + 530;
         int y = (int)line_o;
         int w = rect_w;
-        int h = (int)rect_h + line_o;
+        int h = line_h + line_o;
 
         SDL_Rect rect = {x, y, w, h};
         SDL_RenderFillRect(renderer, &rect);
