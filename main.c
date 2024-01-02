@@ -18,35 +18,8 @@ void init()
 {
     px = 300;
     py = 300;
-    p_d_x = cos(p_a) * 5;
-    p_d_y = sin(p_a) * 5;
-}
-
-void updatePlayerPosition() {
-    if (keys.w) {
-        px += p_d_x;
-        py += p_d_y;
-    }
-    if (keys.a) {
-        p_a -= 0.1;
-        if (p_a < 0) {
-            p_a += (2 * PI);
-        }
-        p_d_x = cos(p_a) * 5;
-        p_d_y = sin(p_a) * 5;
-    }
-    if (keys.s) {
-        px -= p_d_x;
-        py -= p_d_y;
-    }
-    if (keys.d) {
-        p_a += 0.1;
-        if (p_a > (2 * PI)) {
-            p_a -= (2 * PI);
-        }
-        p_d_x = cos(p_a) * 5;
-        p_d_y = sin(p_a) * 5;
-    }
+    p_d_x = cos(p_a) * 2;
+    p_d_y = sin(p_a) * 2;
 }
 
 
@@ -64,6 +37,41 @@ int map [] =
                 1,0,0,0,0,0,0,1,
                 1,1,1,1,1,1,1,1
         };
+
+void updatePlayerPosition()
+{
+    int x_offset = (p_d_x < 0) ? -20 : 20;
+    int y_offset = (p_d_y < 0) ? -20 : 20;
+    int ipx = px / 64.0, ipx_add_xo = (px + x_offset)/64.0, ipx_sub_xo = (px - x_offset)/64.0;
+    int ipy = py / 64.0, ipy_add_yo = (py + y_offset)/64.0, ipy_sub_yo = (py - y_offset)/64.0;
+
+    if (keys.w)
+    {
+        if (map[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y;
+        if (map[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x;
+    }
+    if (keys.a) {
+        p_a -= 0.1;
+        if (p_a < 0) {
+            p_a += (2 * PI);
+        }
+        p_d_x = cos(p_a) * 2;
+        p_d_y = sin(p_a) * 2;
+    }
+    if (keys.s)
+    {
+        if (map[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y;
+        if (map[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x;
+    }
+    if (keys.d) {
+        p_a += 0.1;
+        if (p_a > (2 * PI)) {
+            p_a -= (2 * PI);
+        }
+        p_d_x = cos(p_a) * 2;
+        p_d_y = sin(p_a) * 2;
+    }
+}
 
 void draw_2D_map(SDL_Renderer *renderer)
 {
