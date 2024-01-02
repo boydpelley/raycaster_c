@@ -7,6 +7,11 @@
 #define P3 3*PI/2
 #define DR 0.0174533
 
+typedef struct
+{
+    int w, a, s, d;
+}button_keys; button_keys keys;
+
 float px, py, p_d_x, p_d_y, p_a;
 
 void init()
@@ -15,6 +20,33 @@ void init()
     py = 300;
     p_d_x = cos(p_a) * 5;
     p_d_y = sin(p_a) * 5;
+}
+
+void updatePlayerPosition() {
+    if (keys.w) {
+        px += p_d_x;
+        py += p_d_y;
+    }
+    if (keys.a) {
+        p_a -= 0.1;
+        if (p_a < 0) {
+            p_a += (2 * PI);
+        }
+        p_d_x = cos(p_a) * 5;
+        p_d_y = sin(p_a) * 5;
+    }
+    if (keys.s) {
+        px -= p_d_x;
+        py -= p_d_y;
+    }
+    if (keys.d) {
+        p_a += 0.1;
+        if (p_a > (2 * PI)) {
+            p_a -= (2 * PI);
+        }
+        p_d_x = cos(p_a) * 5;
+        p_d_y = sin(p_a) * 5;
+    }
 }
 
 
@@ -235,78 +267,48 @@ void render_screen(SDL_Renderer *renderer)
 }
 
 
-short process_events(SDL_Window * window)
-{
+short process_events(SDL_Window *window) {
     SDL_Event event;
 
     short done = 0;
 
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-            case SDL_WINDOWEVENT_CLOSE:
-            {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_WINDOWEVENT_CLOSE: {
                 if (window) {
                     SDL_DestroyWindow(window);
                     window = NULL;
                     done = 1;
                 }
-            }
-            break;
-            case SDL_KEYDOWN:
-            {
-                switch (event.key.keysym.sym)
-                {
-                    case SDLK_ESCAPE:
-                    {
+            } break;
+            case SDL_KEYDOWN: {
+                switch (event.key.keysym.sym) {
+                    case SDLK_ESCAPE: {
                         done = 1;
                         break;
                     }
-                    case SDLK_w:
-                    {
-                        px += p_d_x;
-                        py += p_d_y;
-                        break;
-                    }
-                    case SDLK_a:
-                    {
-                        p_a -= 0.1;
-                        if (p_a < 0)
-                        {
-                            p_a += (2 * PI);
-                        }
-                        p_d_x = cos(p_a) * 5;
-                        p_d_y = sin(p_a) * 5;
-                        break;
-                    }
-                    case SDLK_s:
-                    {
-                        px -= p_d_x;
-                        py -= p_d_y;
-                        break;
-                    }
-                    case SDLK_d:
-                    {
-                        p_a += 0.1;
-                        if (p_a > (2 * PI))
-                        {
-                            p_a -= (2 * PI);
-                        }
-                        p_d_x = cos(p_a) * 5;
-                        p_d_y = sin(p_a) * 5;
-                        break;
-                    }
                 }
-            }
-            break;
-            case SDL_QUIT:
-            {
+                // Update the corresponding key state in the struct
+                if (event.key.keysym.sym == SDLK_w) keys.w = 1;
+                if (event.key.keysym.sym == SDLK_a) keys.a = 1;
+                if (event.key.keysym.sym == SDLK_s) keys.s = 1;
+                if (event.key.keysym.sym == SDLK_d) keys.d = 1;
+            } break;
+            case SDL_KEYUP: {
+                // Update the corresponding key state in the struct
+                if (event.key.keysym.sym == SDLK_w) keys.w = 0;
+                if (event.key.keysym.sym == SDLK_a) keys.a = 0;
+                if (event.key.keysym.sym == SDLK_s) keys.s = 0;
+                if (event.key.keysym.sym == SDLK_d) keys.d = 0;
+            } break;
+            case SDL_QUIT: {
                 done = 1;
-            }
-            break;
+            } break;
         }
     }
+
+    updatePlayerPosition(); // Update player position based on key states
+
     return done;
 }
 
