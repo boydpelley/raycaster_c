@@ -5,6 +5,7 @@
 #define PI 3.1415926535
 #define P2 PI/2
 #define P3 3*PI/2
+#define DR 0.0174533
 
 float px, py, p_d_x, p_d_y, p_a;
 
@@ -68,8 +69,17 @@ void draw_rays_2D(SDL_Renderer *renderer)
     int r, m_x, m_y, m_p, d_o_f;
     float r_x, r_y, r_a, x_o, y_o;
 
-    r_a = p_a;
-    for (r = 0; r < 1; r++)
+    r_a = p_a - DR * 30;
+    if (r_a < 0)
+    {
+        r_a += 2 * PI;
+    }
+    if (r_a > 2 * PI)
+    {
+        r_a -= 2 * PI;
+    }
+
+    for (r = 0; r < 60; r++)
     {
         d_o_f = 0;
         float dis_h = 1000000, hx = px, hy = py;
@@ -171,6 +181,16 @@ void draw_rays_2D(SDL_Renderer *renderer)
 
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Green color for the line
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
+        r_a += DR;
+        if (r_a < 0)
+        {
+            r_a += 2 * PI;
+        }
+        if (r_a > 2 * PI)
+        {
+            r_a -= 2 * PI;
+        }
+
     }
 }
 
