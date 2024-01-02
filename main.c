@@ -77,7 +77,7 @@ void draw_2D_map(SDL_Renderer *renderer)
 }
 
 
-void draw_rays_3D()
+void draw_rays_3D(SDL_Renderer *renderer)
 {
     int r, m_x, m_y, m_p, d_o_f;
     float r_x, r_y, r_a, x_o, y_o;
@@ -91,11 +91,15 @@ void draw_rays_3D()
         {
             r_y = ( ( (int)py >> 6) << 6) - 0.0001;
             r_x = (py - r_y) * a_tan + px;
+            y_o = -64;
+            x_o = -y_o * a_tan;
         }
         if (r_a < PI)
         {
             r_y = ( ( (int)py >> 6) << 6) + 64;
             r_x = (py - r_y) * a_tan + px;
+            y_o = 64;
+            x_o = -y_o * a_tan;
         }
         if (r_a == 0 || r_a == PI)
         {
@@ -107,7 +111,7 @@ void draw_rays_3D()
         {
             m_x = (int) (r_x) >> 6;
             m_y = (int) (r_y) >> 6;
-            m_p - m_y * map_x + m_x;
+            m_p = m_y * map_x + m_x;
             if ( m_p < map_x * map_y && map[m_p] == 1)
             {
                 d_o_f = 8;
@@ -120,6 +124,8 @@ void draw_rays_3D()
             }
 
         }
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Red color for the line
+        SDL_RenderDrawLine(renderer, px, py, r_x, r_y);
     }
 }
 
@@ -135,6 +141,8 @@ void render_screen(SDL_Renderer *renderer)
     draw_2D_map(renderer);
 
     draw_player(renderer);
+
+    draw_rays_3D(renderer);
 
     SDL_RenderPresent(renderer);
 }
