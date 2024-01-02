@@ -58,7 +58,12 @@ void draw_2D_map(SDL_Renderer *renderer)
     }
 }
 
-void draw_rays_3D(SDL_Renderer *renderer)
+float dist(float a_x, float a_y, float b_x, float b_y, float c)
+{
+    return c = ( sqrt( (b_x - a_x) * (b_x - a_x) + (b_y - a_y) * (b_y - a_y) ) );
+}
+
+void draw_rays_2D(SDL_Renderer *renderer)
 {
     int r, m_x, m_y, m_p, d_o_f;
     float r_x, r_y, r_a, x_o, y_o;
@@ -67,6 +72,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
     for (r = 0; r < 1; r++)
     {
         d_o_f = 0;
+        float dis_h = 1000000, hx = px, hy = py;
         float a_tan = -1 / tan(r_a);
         if (r_a > PI)
         {
@@ -93,8 +99,11 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_x = (int) (r_x) >> 6;
             m_y = (int) (r_y) >> 6;
             m_p = m_y * map_x + m_x;
-            if ( m_p < map_x * map_y && map[m_p] == 1)
+            if ( m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
             {
+                hx = r_x;
+                hy = r_y;
+                dis_h = dist(px, py, hx, hy, r_a);
                 d_o_f = 8;
             }
             else
@@ -105,10 +114,9 @@ void draw_rays_3D(SDL_Renderer *renderer)
             }
 
         }
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Green color for the line
-        SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
 
         d_o_f = 0;
+        float dis_v = 1000000, vx = px, vy = py;
         float n_tan = -tan(r_a);
         if (r_a > P2 && r_a < P3)
         {
@@ -135,8 +143,11 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_x = (int) (r_x) >> 6;
             m_y = (int) (r_y) >> 6;
             m_p = m_y * map_x + m_x;
-            if ( m_p < map_x * map_y && map[m_p] == 1)
+            if ( m_p > 0 &&  m_p < map_x * map_y && map[m_p] == 1)
             {
+                vx = r_x;
+                vy = r_y;
+                dis_v = dist(px, py, vx, vy, r_a);
                 d_o_f = 8;
             }
             else
@@ -147,6 +158,17 @@ void draw_rays_3D(SDL_Renderer *renderer)
             }
 
         }
+        if (dis_v < dis_h)
+        {
+            r_x = vx;
+            r_y = vy;
+        }
+        if (dis_h < dis_v)
+        {
+            r_x = hx;
+            r_y = hy;
+        }
+
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Green color for the line
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
     }
@@ -168,7 +190,7 @@ void draw_player(SDL_Renderer *renderer)
     float line_end_x = player_center_x + line_length * cos(p_a);
     float line_end_y = player_center_y + line_length * sin(p_a);
 
-    draw_rays_3D(renderer);
+    draw_rays_2D(renderer);
 
     // Draw the line in front of the player
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
