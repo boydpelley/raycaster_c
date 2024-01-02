@@ -14,41 +14,21 @@ void init()
     p_d_y = sin(p_a) * 5;
 }
 
-// The player will be represented by a little yellow rectangle
-void draw_player(SDL_Renderer *renderer)
-{
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    SDL_Rect player = {px, py, 8, 8};
-    SDL_RenderFillRect(renderer, &player);
-
-    // Calculate the center of the player rectangle
-    float player_center_x = px + player.w / 2.0;
-    float player_center_y = py + player.h / 2.0;
-
-    // Calculate the endpoint of the line in front of the player
-    float line_length = 20;  // You can adjust the length of the line
-    float line_end_x = player_center_x + line_length * cos(p_a);
-    float line_end_y = player_center_y + line_length * sin(p_a);
-
-    // Draw the line in front of the player
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
-    SDL_RenderDrawLine(renderer, player_center_x, player_center_y, line_end_x, line_end_y);
-}
 
 int map_x = 8;
 int map_y = 8;
 int map_size = 64;
 int map [] =
-{
-        1,1,1,1,1,1,1,1,
-        1,0,1,0,0,0,0,1,
-        1,0,1,0,0,0,0,1,
-        1,0,1,0,0,0,0,1,
-        1,0,0,0,0,0,0,1,
-        1,0,0,0,0,1,0,1,
-        1,0,0,0,0,0,0,1,
-        1,1,1,1,1,1,1,1
-};
+        {
+                1,1,1,1,1,1,1,1,
+                1,0,1,0,0,0,0,1,
+                1,0,1,0,0,0,0,1,
+                1,0,1,0,0,0,0,1,
+                1,0,0,0,0,0,0,1,
+                1,0,0,0,0,1,0,1,
+                1,0,0,0,0,0,0,1,
+                1,1,1,1,1,1,1,1
+        };
 
 void draw_2D_map(SDL_Renderer *renderer)
 {
@@ -75,7 +55,6 @@ void draw_2D_map(SDL_Renderer *renderer)
         }
     }
 }
-
 
 void draw_rays_3D(SDL_Renderer *renderer)
 {
@@ -125,8 +104,31 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
         }
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Red color for the line
-        SDL_RenderDrawLine(renderer, px, py, r_x, r_y);
+        SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
     }
+}
+
+// The player will be represented by a little yellow rectangle
+void draw_player(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    SDL_Rect player = {px, py, 8, 8};
+    SDL_RenderFillRect(renderer, &player);
+
+    // Calculate the center of the player rectangle
+    float player_center_x = px + player.w / 2.0;
+    float player_center_y = py + player.h / 2.0;
+
+    // Calculate the endpoint of the line in front of the player
+    float line_length = 20;  // You can adjust the length of the line
+    float line_end_x = player_center_x + line_length * cos(p_a);
+    float line_end_y = player_center_y + line_length * sin(p_a);
+
+    draw_rays_3D(renderer);
+
+    // Draw the line in front of the player
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
+    SDL_RenderDrawLine(renderer, player_center_x, player_center_y, line_end_x, line_end_y);
 }
 
 
@@ -141,8 +143,6 @@ void render_screen(SDL_Renderer *renderer)
     draw_2D_map(renderer);
 
     draw_player(renderer);
-
-    draw_rays_3D(renderer);
 
     SDL_RenderPresent(renderer);
 }
