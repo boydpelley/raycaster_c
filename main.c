@@ -146,15 +146,16 @@ void draw_rays_3D(SDL_Renderer *renderer)
             r_x = vx;
             r_y = vy;
             dis_t = dis_v;
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         }
         else
         {
             r_x = hx;
             r_y = hy;
             dis_t = dis_h;
+            SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
         }
 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
 
         // Draw 3D Walls
