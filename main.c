@@ -84,32 +84,19 @@ void draw_rays_3D(SDL_Renderer *renderer)
         d_o_f = 0;
         float dis_h = 1000000, hx = px, hy = py, dis_t;
         float a_tan = -1 / tan(r_a);
-        if (r_a > PI)
+
+        r_y = floor(py / map_size) * map_size + (r_a > PI ? -0.0001 : map_size);
+        r_x = (py - r_y) * a_tan + px;
+        y_o = (r_a > PI) ? -map_size : map_size;
+        x_o = -y_o * a_tan;
+
+        while (d_o_f < 8)
         {
-            r_y = ( ( (int)py >> 6) << 6) - 0.0001;
-            r_x = (py - r_y) * a_tan + px;
-            y_o = -64;
-            x_o = -y_o * a_tan;
-        }
-        if (r_a < PI)
-        {
-            r_y = ( ( (int)py >> 6) << 6) + 64;
-            r_x = (py - r_y) * a_tan + px;
-            y_o = 64;
-            x_o = -y_o * a_tan;
-        }
-        if (r_a == 0 || r_a == PI)
-        {
-            r_x = px;
-            r_y = py;
-            d_o_f = 8;
-        }
-        while ( d_o_f < 8 )
-        {
-            m_x = (int) (r_x) >> 6;
-            m_y = (int) (r_y) >> 6;
+            m_x = (int)(r_x) / map_size;
+            m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
-            if ( m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
+
+            if (m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
             {
                 hx = r_x;
                 hy = r_y;
@@ -122,38 +109,24 @@ void draw_rays_3D(SDL_Renderer *renderer)
                 r_y += y_o;
                 d_o_f += 1;
             }
-
         }
 
         d_o_f = 0;
         float dis_v = 1000000, vx = px, vy = py;
         float n_tan = -tan(r_a);
-        if (r_a > P2 && r_a < P3)
+
+        r_x = (r_a > P2 && r_a < P3) ? floor(px / map_size) * map_size - 0.0001 : floor(px / map_size) * map_size + map_size;
+        r_y = (px - r_x) * n_tan + py;
+        x_o = (r_a > P2 && r_a < P3) ? -map_size : map_size;
+        y_o = -x_o * n_tan;
+
+        while (d_o_f < 8)
         {
-            r_x = ( ( (int)py >> 6) << 6) - 0.0001;
-            r_y = (px - r_x) * n_tan + py;
-            x_o = -64;
-            y_o = -x_o * n_tan;
-        }
-        if (r_a < P2 || r_a > P3)
-        {
-            r_x = ( ( (int)py >> 6) << 6) + 64;
-            r_y = (px - r_x) * n_tan + py;
-            x_o = 64;
-            y_o = -x_o * n_tan;
-        }
-        if (r_a == 0 || r_a == PI)
-        {
-            r_x = px;
-            r_y = py;
-            d_o_f = 8;
-        }
-        while ( d_o_f < 8 )
-        {
-            m_x = (int) (r_x) >> 6;
-            m_y = (int) (r_y) >> 6;
+            m_x = (int)(r_x) / map_size;
+            m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
-            if ( m_p > 0 &&  m_p < map_x * map_y && map[m_p] == 1)
+
+            if (m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
             {
                 vx = r_x;
                 vy = r_y;
@@ -166,22 +139,22 @@ void draw_rays_3D(SDL_Renderer *renderer)
                 r_y += y_o;
                 d_o_f += 1;
             }
-
         }
+
         if (dis_v < dis_h)
         {
             r_x = vx;
             r_y = vy;
             dis_t = dis_v;
         }
-        if (dis_h < dis_v)
+        else
         {
             r_x = hx;
             r_y = hy;
             dis_t = dis_h;
         }
 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Green color for the line
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
 
         // Draw 3D Walls
@@ -196,20 +169,19 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
         dis_t = dis_t * cos(c_a);
         float line_h = (map_size * 320) / dis_t;
-        if (line_h > 320) line_h = 320;
+        if (line_h > 320)
+            line_h = 320;
         float line_o = 160 - line_h / 2;
 
         int rect_w = 8;
         float rect_h = line_h;
         int x = r * 8 + 530;
-        int y = (int) line_o;
+        int y = (int)line_o;
         int w = rect_w;
-        int h = (int) rect_h + line_o;
+        int h = (int)rect_h + line_o;
 
         SDL_Rect rect = {x, y, w, h};
         SDL_RenderFillRect(renderer, &rect);
-
-
 
         r_a += DR;
         if (r_a < 0)
@@ -220,7 +192,6 @@ void draw_rays_3D(SDL_Renderer *renderer)
         {
             r_a -= 2 * PI;
         }
-
     }
 }
 
