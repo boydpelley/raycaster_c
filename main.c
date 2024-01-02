@@ -64,7 +64,7 @@ float dist(float a_x, float a_y, float b_x, float b_y, float c)
     return c = ( sqrt( (b_x - a_x) * (b_x - a_x) + (b_y - a_y) * (b_y - a_y) ) );
 }
 
-void draw_rays_2D(SDL_Renderer *renderer)
+void draw_rays_3D(SDL_Renderer *renderer)
 {
     int r, m_x, m_y, m_p, d_o_f;
     float r_x, r_y, r_a, x_o, y_o;
@@ -82,7 +82,7 @@ void draw_rays_2D(SDL_Renderer *renderer)
     for (r = 0; r < 60; r++)
     {
         d_o_f = 0;
-        float dis_h = 1000000, hx = px, hy = py;
+        float dis_h = 1000000, hx = px, hy = py, dis_t;
         float a_tan = -1 / tan(r_a);
         if (r_a > PI)
         {
@@ -172,15 +172,45 @@ void draw_rays_2D(SDL_Renderer *renderer)
         {
             r_x = vx;
             r_y = vy;
+            dis_t = dis_v;
         }
         if (dis_h < dis_v)
         {
             r_x = hx;
             r_y = hy;
+            dis_t = dis_h;
         }
 
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Green color for the line
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
+
+        // Draw 3D Walls
+        float c_a = p_a - r_a;
+        if (c_a < 0)
+        {
+            c_a += 2 * PI;
+        }
+        if (c_a > 2 * PI)
+        {
+            c_a -= 2 * PI;
+        }
+        dis_t = dis_t * cos(c_a);
+        float line_h = (map_size * 320) / dis_t;
+        if (line_h > 320) line_h = 320;
+        float line_o = 160 - line_h / 2;
+
+        int rect_w = 8;
+        float rect_h = line_h;
+        int x = r * 8 + 530;
+        int y = (int) line_o;
+        int w = rect_w;
+        int h = (int) rect_h + line_o;
+
+        SDL_Rect rect = {x, y, w, h};
+        SDL_RenderFillRect(renderer, &rect);
+
+
+
         r_a += DR;
         if (r_a < 0)
         {
@@ -210,7 +240,7 @@ void draw_player(SDL_Renderer *renderer)
     float line_end_x = player_center_x + line_length * cos(p_a);
     float line_end_y = player_center_y + line_length * sin(p_a);
 
-    draw_rays_2D(renderer);
+    draw_rays_3D(renderer);
 
     // Draw the line in front of the player
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
