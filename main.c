@@ -176,7 +176,7 @@ int map_y = 8;
 int map_size = 64;
 int map [] =
         {
-                1,1,1,1,1,1,1,1,
+                1,1,1,1,1,2,1,1,
                 1,0,1,0,0,0,0,1,
                 1,0,1,0,0,0,0,1,
                 1,0,1,0,0,0,0,1,
@@ -228,7 +228,7 @@ void draw_2D_map(SDL_Renderer *renderer)
     {
         for (x = 0; x < map_x; x++)
         {
-            if(map[y*map_y+x] == 1)
+            if(map[y*map_y+x] > 0)
             {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             }
@@ -269,6 +269,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
     for (r = 0; r < 60; r++)
     {
+        int vmt = 0, hmt = 0; // For textures
+
         d_o_f = 0;
         float dis_h = 1000000, hx = px, hy = py, dis_t;
         float a_tan = -1 / tan(r_a);
@@ -284,8 +286,9 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
 
-            if (m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
+            if (m_p > 0 && m_p < map_x * map_y && map[m_p] > 0)
             {
+                hmt = map[m_p] - 1;
                 hx = r_x;
                 hy = r_y;
                 dis_h = dist(px, py, hx, hy, r_a);
@@ -314,8 +317,9 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
 
-            if (m_p > 0 && m_p < map_x * map_y && map[m_p] == 1)
+            if (m_p > 0 && m_p < map_x * map_y && map[m_p] > 0)
             {
+                vmt = map[m_p] - 1;
                 vx = r_x;
                 vy = r_y;
                 dis_v = dist(px, py, vx, vy, r_a);
@@ -332,6 +336,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         float shade = 1;
         if (dis_v < dis_h)
         {
+            hmt = vmt;
             r_x = vx;
             r_y = vy;
             dis_t = dis_v;
@@ -340,6 +345,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
         else
         {
+            vmt = hmt;
             r_x = hx;
             r_y = hy;
             dis_t = dis_h;
@@ -372,7 +378,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
         float line_o = 160 - line_h / 2;
 
-        float ty = ty_offset * ty_step;
+        float ty = ty_offset * ty_step + hmt * 32;
         float tx;
         if (shade == 1)
         {
