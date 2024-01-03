@@ -463,8 +463,12 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
             SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 
-            SDL_Rect rect = { x_rect, y_rect, w_rect, h_rect};
-            SDL_RenderFillRect(renderer, &rect);
+            SDL_Rect floor = { x_rect, y_rect, w_rect, h_rect};
+            SDL_RenderFillRect(renderer, &floor);
+
+            y_rect = 320 - y_floor;
+            SDL_Rect ceil = { x_rect, y_rect, w_rect, h_rect};
+            SDL_RenderFillRect(renderer, &ceil);
         }
 
 
