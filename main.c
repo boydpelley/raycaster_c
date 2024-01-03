@@ -174,16 +174,16 @@ void init()
 int map_x = 8;
 int map_y = 8;
 int map_size = 64;
-int map [] =
+int map_w [] =
         {
                 1,1,1,1,1,2,1,1,
-                1,0,1,0,0,0,0,1,
-                1,0,1,0,0,0,0,1,
-                1,0,1,0,0,0,0,1,
+                1,0,0,1,0,0,0,1,
+                3,0,0,2,0,0,0,1,
+                3,0,0,1,0,2,0,1,
+                1,3,4,2,0,0,0,1,
+                2,0,0,0,0,1,0,1,
                 1,0,0,0,0,0,0,1,
-                1,0,0,0,0,1,0,1,
-                1,0,0,0,0,0,0,1,
-                1,1,1,1,1,1,1,1
+                1,2,1,3,1,1,1,1
         };
 
 void updatePlayerPosition()
@@ -195,8 +195,8 @@ void updatePlayerPosition()
 
     if (keys.w)
     {
-        if (map[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y;
-        if (map[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x;
+        if (map_w[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x;
     }
     if (keys.a) {
         p_a -= 0.1;
@@ -208,8 +208,8 @@ void updatePlayerPosition()
     }
     if (keys.s)
     {
-        if (map[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y;
-        if (map[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x;
+        if (map_w[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x;
     }
     if (keys.d) {
         p_a += 0.1;
@@ -228,7 +228,7 @@ void draw_2D_map(SDL_Renderer *renderer)
     {
         for (x = 0; x < map_x; x++)
         {
-            if(map[y*map_y+x] > 0)
+            if(map_w[y*map_y+x] > 0)
             {
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             }
@@ -286,9 +286,9 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
 
-            if (m_p > 0 && m_p < map_x * map_y && map[m_p] > 0)
+            if (m_p > 0 && m_p < map_x * map_y && map_w[m_p] > 0)
             {
-                hmt = map[m_p] - 1;
+                hmt = map_w[m_p] - 1;
                 hx = r_x;
                 hy = r_y;
                 dis_h = dist(px, py, hx, hy, r_a);
@@ -317,9 +317,9 @@ void draw_rays_3D(SDL_Renderer *renderer)
             m_y = (int)(r_y) / map_size;
             m_p = m_y * map_x + m_x;
 
-            if (m_p > 0 && m_p < map_x * map_y && map[m_p] > 0)
+            if (m_p > 0 && m_p < map_x * map_y && map_w[m_p] > 0)
             {
-                vmt = map[m_p] - 1;
+                vmt = map_w[m_p] - 1;
                 vx = r_x;
                 vy = r_y;
                 dis_v = dist(px, py, vx, vy, r_a);
