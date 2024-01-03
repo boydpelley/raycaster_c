@@ -170,6 +170,9 @@ void init()
     p_d_y = sin(p_a) * 2;
 }
 
+float degToRad(float a) { return a*M_PI/180.0;}
+float FixAng(float a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
+
 
 int map_x = 8;
 int map_y = 8;
@@ -425,6 +428,26 @@ void draw_rays_3D(SDL_Renderer *renderer)
             SDL_RenderFillRect(renderer, &rect);
 
             ty += ty_step;
+        }
+
+        // Draw Floors
+        for (int y = line_o + line_h; y < 360; y++)
+        {
+            float d_y = y - (320 / 2.0), deg = degToRad(r_a), r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
+            tx = px / 2 + cos(deg) * 158 * 32 / d_y / r_a_fix;
+            ty = py / 2 - sin(deg) * 158 * 32 / d_y / r_a_fix;
+
+            float c = all_textures[ ((int) (ty) & 31) * 32  + ((int) (tx) & 31)] * 200; // Multiplied by 200 to make darker
+
+            int x_rect = r * 8 + 530;
+            int y_rect = y;
+            int w_rect = 8;
+            int h_rect = 8;
+
+            SDL_SetRenderDrawColor(renderer, c, c , c , 255);
+
+            SDL_Rect rect = {x_rect, y_rect, w_rect, h_rect};
+            SDL_RenderFillRect(renderer, &rect);
         }
 
 
