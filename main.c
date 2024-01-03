@@ -391,10 +391,28 @@ void draw_rays_3D(SDL_Renderer *renderer)
             if (r_a > 90 && r_a < 270) tx = 31 - tx;
         }
 
+        // Draw walls
         for (int y = 0; y < line_h; y++)
         {
             float c = (float)all_textures[(int) (ty) * 32 + (int) (tx)] * shade;
-            SDL_SetRenderDrawColor(renderer, c * 255, c * 255, c * 255, 255);
+            switch (hmt)
+            {
+                case 0:
+                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255) / 2, (c * 255) / 2, 255);
+                    break;
+                case 1:
+                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255), (c * 255) / 2, 255);
+                    break;
+                case 2:
+                    SDL_SetRenderDrawColor(renderer, (c * 255) / 2, (c * 255) / 2, (c * 255), 255);
+                    break;
+                case 3:
+                    SDL_SetRenderDrawColor(renderer, (c * 255 / 2), (c * 255), (c * 255) / 2, 255);
+                    break;
+                default:
+                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255) , (c * 255), 255);
+                    break;
+            }
 
             int rect_w = 8;
             int rect_h = 8;
@@ -462,25 +480,48 @@ void render_screen(SDL_Renderer *renderer)
 }
 
 
-short process_events(SDL_Window *window) {
+short process_events(SDL_Window *window)
+{
     SDL_Event event;
 
     short done = 0;
 
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_WINDOWEVENT_CLOSE: {
-                if (window) {
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+            case SDL_WINDOWEVENT_CLOSE:
+            {
+                if (window)
+                {
                     SDL_DestroyWindow(window);
                     window = NULL;
                     done = 1;
                 }
             } break;
-            case SDL_KEYDOWN: {
-                switch (event.key.keysym.sym) {
-                    case SDLK_ESCAPE: {
+            case SDL_KEYDOWN:
+            {
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                    {
                         done = 1;
                         break;
+                    }
+                    case SDLK_e:
+                    {
+                        int x_o = 0;
+                        if (p_d_x < 0) x_o = -25;
+                        else x_o = 25;
+
+                        int y_o = 0;
+                        if (p_d_y < 0) y_o = -25;
+                        else y_o = 25;
+
+                        int ipx = px / 64.0, ipx_add_xo = (px + x_o) / 64.0;
+                        int ipy = py / 64.0, ipy_add_yo = (py + y_o) / 64.0;
+
+                        if (map_w[ipy_add_yo * map_x + ipx_add_xo] == 4) map_w[ipy_add_yo * map_x + ipx_add_xo] = 0;
                     }
                 }
                 // Update the corresponding key state in the struct
