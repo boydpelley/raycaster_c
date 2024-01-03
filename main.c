@@ -3,8 +3,8 @@
 #include "SDL2/SDL.h"
 
 #define PI 3.1415926535
-#define P2 PI/2
-#define P3 3*PI/2
+#define P2 (PI/2)
+#define P3 (3*PI/2)
 #define DR 0.0174533
 
 typedef struct
@@ -160,7 +160,7 @@ int all_textures[]=               //all 32x32 textures
         0,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,0,
 };
 
-float px, py, p_d_x, p_d_y, p_a;
+double px, py, p_d_x, p_d_y, p_a;
 
 void init()
 {
@@ -169,9 +169,6 @@ void init()
     p_d_x = cos(p_a) * 2;
     p_d_y = sin(p_a) * 2;
 }
-
-float degToRad(float a) { return a*M_PI/180.0;}
-float FixAng(float a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
 
 
 int map_x = 8;
@@ -262,15 +259,16 @@ void draw_2D_map(SDL_Renderer *renderer)
     }
 }
 
-float dist(float a_x, float a_y, float b_x, float b_y, float c)
+double dist(double a_x, double a_y, double b_x, double b_y, double c)
 {
-    return c = ( sqrt( (b_x - a_x) * (b_x - a_x) + (b_y - a_y) * (b_y - a_y) ) );
+    c = ( sqrt( (b_x - a_x) * (b_x - a_x) + (b_y - a_y) * (b_y - a_y) ) );
+    return c;
 }
 
 void draw_rays_3D(SDL_Renderer *renderer)
 {
     int r, m_x, m_y, m_p, d_o_f;
-    float r_x, r_y, r_a, x_o, y_o;
+    double r_x, r_y, r_a, x_o, y_o;
 
     r_a = p_a - DR * 30;
     if (r_a < 0)
@@ -287,8 +285,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
         int vmt = 0, hmt = 0; // For textures
 
         d_o_f = 0;
-        float dis_h = 1000000, hx = px, hy = py, dis_t;
-        float a_tan = -1 / tan(r_a);
+        double dis_h = 1000000, hx = px, hy = py, dis_t;
+        double a_tan = -1 / tan(r_a);
 
         r_y = floor(py / map_size) * map_size + (r_a > PI ? -0.0001 : map_size);
         r_x = (py - r_y) * a_tan + px;
@@ -318,8 +316,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
 
         d_o_f = 0;
-        float dis_v = 1000000, vx = px, vy = py;
-        float n_tan = -tan(r_a);
+        double dis_v = 1000000, vx = px, vy = py;
+        double n_tan = -tan(r_a);
 
         r_x = (r_a > P2 && r_a < P3) ? floor(px / map_size) * map_size - 0.0001 : floor(px / map_size) * map_size + map_size;
         r_y = (px - r_x) * n_tan + py;
@@ -348,7 +346,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
             }
         }
 
-        float shade = 1;
+        double shade = 1;
         if (dis_v < dis_h)
         {
             hmt = vmt;
@@ -371,7 +369,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
 
         // Draw 3D Walls
-        float c_a = p_a - r_a;
+        double c_a = p_a - r_a;
         if (c_a < 0)
         {
             c_a += 2 * PI;
@@ -381,20 +379,20 @@ void draw_rays_3D(SDL_Renderer *renderer)
             c_a -= 2 * PI;
         }
         dis_t = dis_t * cos(c_a);
-        float line_h = ((float)map_size * 320) / dis_t;
+        double line_h = ((double)map_size * 320) / dis_t;
 
-        float ty_step = 32.0 / (float)line_h;
-        float ty_offset = 0;
+        double ty_step = 32.0 / (double)line_h;
+        double ty_offset = 0;
 
         if (line_h > 320)
         {
             ty_offset = (line_h - 320) / 2;
             line_h = 320;
         }
-        float line_o = 160 - line_h / 2;
+        double line_o = 160 - line_h / 2;
 
-        float ty = ty_offset * ty_step + hmt * 32;
-        float tx;
+        double ty = ty_offset * ty_step + hmt * 32;
+        double tx;
         if (shade == 1)
         {
             tx = (int)(r_x / 2.0) % 32;
@@ -409,7 +407,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         // Draw walls
         for (int y = 0; y < line_h; y++)
         {
-            float c = (float)all_textures[(int) (ty) * 32 + (int) (tx)] * shade;
+            double c = (double)all_textures[(int) (ty) * 32 + (int) (tx)] * shade;
             switch (hmt)
             {
                 case 0:
@@ -445,16 +443,16 @@ void draw_rays_3D(SDL_Renderer *renderer)
         // Draw Floors
         for (int y_floor = line_o + line_h; y_floor < 320; y_floor++) {
         /*
-            float dy = y_floor - (320 / 2.0);
-            float deg = degToRad(r_a);
-            float r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
+            double dy = y_floor - (320 / 2.0);
+            double deg = degToRad(r_a);
+            double r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
             tx = px / 2 + cos(deg) * 158 * 32 / dy / r_a_fix;
             ty = py / 2 - sin(deg) * 158 * 32 / dy / r_a_fix;
 
             int mapIndex = (int)(ty / 32.0) * map_x + (int)(tx / 32.0);
             int mp = mapF[mapIndex] * 32 * 32;
 
-            float c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
+            double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
         */
             int x_rect = r * 8 + 530;
             int y_rect = y_floor;
@@ -492,18 +490,18 @@ void draw_player(SDL_Renderer *renderer)
     SDL_RenderFillRect(renderer, &player);
 
     // Calculate the center of the player rectangle
-    float player_center_x = px + player.w / 2.0;
-    float player_center_y = py + player.h / 2.0;
+    double player_center_x = px + player.w / 2.0;
+    double player_center_y = py + player.h / 2.0;
 
     // Calculate the endpoint of the line in front of the player
-    float line_length = 20;  // You can adjust the length of the line
-    float line_end_x = player_center_x + line_length * cos(p_a);
-    float line_end_y = player_center_y + line_length * sin(p_a);
+    double line_length = 20;  // You can adjust the length of the line
+    double line_end_x = player_center_x + line_length * cos(p_a);
+    double line_end_y = player_center_y + line_length * sin(p_a);
 
     draw_rays_3D(renderer);
 
     // Draw the line in front of the player
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Red color for the line
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);  // Yellow color for the line
     SDL_RenderDrawLine(renderer, player_center_x, player_center_y, line_end_x, line_end_y);
 }
 
