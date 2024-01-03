@@ -411,19 +411,19 @@ void draw_rays_3D(SDL_Renderer *renderer)
             switch (hmt)
             {
                 case 0:
-                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255) / 2, (c * 255) / 2, 255);
+                    SDL_SetRenderDrawColor(renderer, (unsigned char)(c * 255), (unsigned char)(c * 255) / 2, (unsigned char)(c * 255) / 2, 255);
                     break;
                 case 1:
-                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255), (c * 255) / 2, 255);
+                    SDL_SetRenderDrawColor(renderer, (unsigned char)(c * 255), (unsigned char)(c * 255), (unsigned char)(c * 255) / 2, 255);
                     break;
                 case 2:
-                    SDL_SetRenderDrawColor(renderer, (c * 255) / 2, (c * 255) / 2, (c * 255), 255);
+                    SDL_SetRenderDrawColor(renderer, (unsigned char)(c * 255) / 2, (unsigned char) (c * 255) / 2, (unsigned char)(c * 255), 255);
                     break;
                 case 3:
-                    SDL_SetRenderDrawColor(renderer, (c * 255 / 2), (c * 255), (c * 255) / 2, 255);
+                    SDL_SetRenderDrawColor(renderer, (unsigned char)(c * 255 / 2), (unsigned char)(c * 255), (unsigned char)(c * 255) / 2, 255);
                     break;
                 default:
-                    SDL_SetRenderDrawColor(renderer, (c * 255), (c * 255) , (c * 255), 255);
+                    SDL_SetRenderDrawColor(renderer, (unsigned char)(c * 255), (unsigned char)(c * 255) , (unsigned char)(c * 255), 255);
                     break;
             }
 
@@ -596,7 +596,7 @@ int main(int argc, char *argv[])
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
 
-    SDL_Init(SDL_INIT_VIDEO);;
+    SDL_Init(SDL_INIT_VIDEO);
     init();
 
     window = SDL_CreateWindow("Raycaster Window",
