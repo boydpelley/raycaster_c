@@ -189,6 +189,18 @@ int map_w [] =
                 1,2,1,3,1,1,1,1
         };
 
+int mapF[]=          //floors
+        {
+                0,0,0,0,0,0,0,0,
+                0,0,0,0,1,1,0,0,
+                0,0,0,0,2,0,0,0,
+                0,0,0,0,0,0,0,0,
+                0,0,2,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,
+                0,1,1,1,1,0,0,0,
+                0,0,0,0,0,0,0,0,
+        };
+
 void updatePlayerPosition()
 {
     int x_offset = (p_d_x < 0) ? -20 : 20;
@@ -431,22 +443,27 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
 
         // Draw Floors
-        for (int y = line_o + line_h; y < 360; y++)
-        {
-            float d_y = y - (320 / 2.0), deg = degToRad(r_a), r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
-            tx = px / 2 + cos(deg) * 158 * 32 / d_y / r_a_fix;
-            ty = py / 2 - sin(deg) * 158 * 32 / d_y / r_a_fix;
+        for (int y_floor = line_o + line_h; y_floor < 320; y_floor++) {
+        /*
+            float dy = y_floor - (320 / 2.0);
+            float deg = degToRad(r_a);
+            float r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
+            tx = px / 2 + cos(deg) * 158 * 32 / dy / r_a_fix;
+            ty = py / 2 - sin(deg) * 158 * 32 / dy / r_a_fix;
 
-            float c = all_textures[ ((int) (ty) & 31) * 32  + ((int) (tx) & 31)] * 200; // Multiplied by 200 to make darker
+            int mapIndex = (int)(ty / 32.0) * map_x + (int)(tx / 32.0);
+            int mp = mapF[mapIndex] * 32 * 32;
 
+            float c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
+        */
             int x_rect = r * 8 + 530;
-            int y_rect = y;
+            int y_rect = y_floor;
             int w_rect = 8;
             int h_rect = 8;
 
-            SDL_SetRenderDrawColor(renderer, c, c , c , 255);
+            SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 
-            SDL_Rect rect = {x_rect, y_rect, w_rect, h_rect};
+            SDL_Rect rect = { x_rect, y_rect, w_rect, h_rect};
             SDL_RenderFillRect(renderer, &rect);
         }
 
