@@ -312,9 +312,18 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
             double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
         */
-            double dy = y - (320 / 2.0), deg=degToRad(r_a), raFix=cos(degToRad(FixAng(p_a - r_a)));
-            tx = px / 2 + cos(deg) * 158 * 32 / dy / raFix;
-            ty = py / 2 - sin(deg) * 158 * 32 / dy/ raFix;
+            double dy = y - (320 / 2.0);
+            double c_a = p_a - r_a;
+            if (c_a < 0)
+            {
+                c_a += 2 * PI;
+            }
+            if (c_a > 2 * PI)
+            {
+                c_a -= 2 * PI;
+            }
+            tx = px / 2 + cos(c_a) * 158 * 32 / dy;
+            ty = py / 2 - sin(c_a) * 158 * 32 / dy;
             int mp = map_f[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
             int pixel= (((int)(ty)&31)*32 + ((int)(tx)&31))*3+mp*3;
             int red   =All_Textures[pixel+0]*0.7;
