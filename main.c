@@ -15,6 +15,7 @@ typedef struct
 }button_keys; button_keys keys;
 
 double px, py, p_d_x, p_d_y, p_a;
+double frame_1, frame_2, fps;
 
 void init()
 {
@@ -23,6 +24,9 @@ void init()
     p_d_x = cos(p_a) * 2;
     p_d_y = sin(p_a) * 2;
 }
+
+float degToRad(float a) { return a*M_PI/180.0;}
+float FixAng(float a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
 
 
 int map_x = 8;
@@ -64,11 +68,10 @@ int map_c[]=          //ceiling
                 0,0,0,0,0,0,0,0,
         };
 
-double degToRad(double a) { return a*M_PI/180.0;}
-double FixAng(double a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
-
 void updatePlayerPosition()
 {
+
+
     int x_offset = (p_d_x < 0) ? -20 : 20;
     int y_offset = (p_d_y < 0) ? -20 : 20;
     int ipx = px / 64.0, ipx_add_xo = (px + x_offset)/64.0, ipx_sub_xo = (px - x_offset)/64.0;
@@ -80,12 +83,10 @@ void updatePlayerPosition()
         if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x;
     }
     if (keys.a) {
-        p_a -= 0.1;
-        if (p_a < 0) {
-            p_a += (2 * PI);
-        }
-        p_d_x = cos(p_a) * 2;
-        p_d_y = sin(p_a) * 2;
+        p_a += 0.2;
+        p_a = FixAng(p_a);
+        p_d_x = cos(degToRad(p_a));
+        p_d_y = -sin(degToRad(p_a));
     }
     if (keys.s)
     {
@@ -93,12 +94,10 @@ void updatePlayerPosition()
         if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x;
     }
     if (keys.d) {
-        p_a += 0.1;
-        if (p_a > (2 * PI)) {
-            p_a -= (2 * PI);
-        }
-        p_d_x = cos(p_a) * 2;
-        p_d_y = sin(p_a) * 2;
+        p_a -= 0.2;
+        p_a = FixAng(p_a);
+        p_d_x = cos(degToRad(p_a));
+        p_d_y = -sin(degToRad(p_a));
     }
 }
 
@@ -137,30 +136,85 @@ double dist(double a_x, double a_y, double b_x, double b_y, double c)
 void draw_rays_3D(SDL_Renderer *renderer)
 {
     int r, m_x, m_y, m_p, d_o_f;
-    double r_x, r_y, r_a, x_o, y_o;
+    double vx, vy, r_x, r_y, r_a, x_o, y_o, dis_v, dis_h;
 
-    r_a = p_a - DR * 30;
-    if (r_a < 0)
-    {
-        r_a += 2 * PI;
-    }
-    if (r_a > 2 * PI)
-    {
-        r_a -= 2 * PI;
-    }
+    r_a = FixAng(p_a + 30);
 
-    for (r = 0; r < 60; r++)
+    for (r = 0; r < 120; r++)
     {
         int vmt = 0, hmt = 0; // For textures
 
         d_o_f = 0;
-        double dis_h = 1000000, hx = px, hy = py, dis_t;
-        double a_tan = -1 / tan(r_a);
+        float Tan = tan(degToRad(r_a));
+        if(cos(degToRad(r_a)) > 0.001)
+        {
+            r_x = (((int)px>>6)<<6)+64;
+            r_y = (px - r_x) * Tan + py;
+            x_o = 64;
+            y_o = -x_o * Tan;
+        }
+        else if(cos(degToRad(r_a))<-0.001)
+        {
+            r_x = (((int)px>>6)<<6) - 0.0001;
+            r_y = (px - r_x) * Tan + py;
+            x_o = -64;
+            y_o = -x_o * Tan;
+        }
+        else
+        {
+            r_x = px;
+            r_y = py;
+            d_o_f = 8;
+        }
 
-        r_y = floor(py / map_size) * map_size + (r_a > PI ? -0.0001 : map_size);
-        r_x = (py - r_y) * a_tan + px;
-        y_o = (r_a > PI) ? -map_size : map_size;
-        x_o = -y_o * a_tan;
+        // Vertical
+        while (d_o_f < 8)
+        {
+            m_x = (int)(r_x) / map_size;
+            m_y = (int)(r_y) / map_size;
+            m_p = m_y * map_x + m_x;
+
+            if (m_p > 0 && m_p < map_x * map_y && map_w[m_p] > 0)
+            {
+                vmt = map_w[m_p] - 1;
+                d_o_f = 8;
+                dis_v = cos(degToRad(r_a)) * (r_x - px) - sin(degToRad(r_a)) * (r_y - py);
+            }
+            else
+            {
+                r_x += x_o;
+                r_y += y_o;
+                d_o_f += 1;
+            }
+        }
+
+        vx = r_x;
+        vy = r_y;
+
+        d_o_f = 0;
+        dis_h = 100000;
+        Tan = 1.0 / Tan;
+
+        if (sin(degToRad(r_a)) > 0.001)
+        {
+            r_y = (( (int)py >> 6) << 6) - 0.0001;
+            r_x = (py - r_y) * Tan + px;
+            y_o = -64;
+            x_o = -y_o * Tan;
+        }
+        else if (sin(degToRad(r_a)) < -0.001)
+        {
+            r_y = (( (int)py >> 6) << 6) + 64;
+            r_x = (py - r_y) * Tan + px;
+            y_o = 64;
+            x_o = -y_o * Tan;
+        }
+        else
+        {
+            r_x = px;
+            r_y = py;
+            d_o_f = 8;
+        }
 
         while (d_o_f < 8)
         {
@@ -171,41 +225,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
             if (m_p > 0 && m_p < map_x * map_y && map_w[m_p] > 0)
             {
                 hmt = map_w[m_p] - 1;
-                hx = r_x;
-                hy = r_y;
-                dis_h = dist(px, py, hx, hy, r_a);
                 d_o_f = 8;
-            }
-            else
-            {
-                r_x += x_o;
-                r_y += y_o;
-                d_o_f += 1;
-            }
-        }
-
-        d_o_f = 0;
-        double dis_v = 1000000, vx = px, vy = py;
-        double n_tan = -tan(r_a);
-
-        r_x = (r_a > P2 && r_a < P3) ? floor(px / map_size) * map_size - 0.0001 : floor(px / map_size) * map_size + map_size;
-        r_y = (px - r_x) * n_tan + py;
-        x_o = (r_a > P2 && r_a < P3) ? -map_size : map_size;
-        y_o = -x_o * n_tan;
-
-        while (d_o_f < 8)
-        {
-            m_x = (int)(r_x) / map_size;
-            m_y = (int)(r_y) / map_size;
-            m_p = m_y * map_x + m_x;
-
-            if (m_p > 0 && m_p < map_x * map_y && map_w[m_p] > 0)
-            {
-                vmt = map_w[m_p] - 1;
-                vx = r_x;
-                vy = r_y;
-                dis_v = dist(px, py, vx, vy, r_a);
-                d_o_f = 8;
+                dis_h = cos(degToRad(r_a)) * (r_x - px) - sin(degToRad(r_a)) * (r_y - py);
             }
             else
             {
@@ -221,46 +242,28 @@ void draw_rays_3D(SDL_Renderer *renderer)
             hmt = vmt;
             r_x = vx;
             r_y = vy;
-            dis_t = dis_v;
+            dis_h = dis_v;
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
             shade = 0.5;
-        }
-        else
-        {
-            vmt = hmt;
-            r_x = hx;
-            r_y = hy;
-            dis_t = dis_h;
-            SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
-            shade = 1;
         }
 
         SDL_RenderDrawLine(renderer, px + 4, py + 4, r_x, r_y);
 
-        // Draw 3D Walls
-        double c_a = p_a - r_a;
-        if (c_a < 0)
-        {
-            c_a += 2 * PI;
-        }
-        if (c_a > 2 * PI)
-        {
-            c_a -= 2 * PI;
-        }
-        dis_t = dis_t * cos(c_a);
-        double line_h = ((double)map_size * 320) / dis_t;
-
+        int c_a = FixAng(p_a - r_a);
+        int line_h = (map_size * 640) / dis_h;
         double ty_step = 32.0 / (double)line_h;
         double ty_offset = 0;
 
-        if (line_h > 320)
+        if (line_h > 640)
         {
-            ty_offset = (line_h - 320) / 2;
-            line_h = 320;
+            ty_offset = (line_h - 640) / 2.0;
+            line_h = 640;
         }
 
-        int line_o = 160 - ((int)line_h >> 1);
+        int line_o = 320 - (line_h >> 1);
 
+        // Draw 3D Walls
+        int y;
         double ty = ty_offset * ty_step;
         double tx;
         if (shade == 1)
@@ -274,14 +277,12 @@ void draw_rays_3D(SDL_Renderer *renderer)
             if (r_a > 90 && r_a < 270) tx = 31 - tx;
         }
 
-        // Draw walls
-        int y;
         for (y = 0; y < line_h; y++)
         {
-            int pixel=((int)ty*32+(int)tx)*3+(hmt*32*32*3);
-            int red   =All_Textures[pixel+0]*shade;
-            int green =All_Textures[pixel+1]*shade;
-            int blue  =All_Textures[pixel+2]*shade;
+            int pixel = ((int)ty * 32 + (int)tx) * 3 + (hmt * 32 * 32 * 3);
+            int red   = All_Textures[pixel + 0] * shade;
+            int green = All_Textures[pixel + 1] * shade;
+            int blue  = All_Textures[pixel + 2] * shade;
 
             SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
 
@@ -299,34 +300,21 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
 
         // Draw Floors
-        for (y = line_o + line_h; y < 320; y++) {
-        /*
-            double dy = y_floor - (320 / 2.0);
+        for (y = line_o + line_h; y < 640; y++)
+        {
+
+            double dy = y - (640 / 2.0);
             double deg = degToRad(r_a);
             double r_a_fix = cos(degToRad(FixAng(p_a - r_a)));
-            tx = px / 2 + cos(deg) * 158 * 32 / dy / r_a_fix;
-            ty = py / 2 - sin(deg) * 158 * 32 / dy / r_a_fix;
 
-            int mapIndex = (int)(ty / 32.0) * map_x + (int)(tx / 32.0);
-            int mp = mapF[mapIndex] * 32 * 32;
+            tx = px / 2 + cos(deg) * 158 * 2 * 32 / dy / r_a_fix;
+            ty = py / 2 - sin(deg) * 158 * 2 * 32 / dy / r_a_fix;
 
-            double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
-        */
-            double dy = y - (320 / 2.0);
-            c_a = atan2(ty, tx) + p_a - r_a;
-
-// Normalize the angle to the [0, 2 * PI) range
-            c_a = fmod(c_a, 2 * PI);
-            if (c_a < 0) {
-                c_a += 2 * PI;
-            }
-            tx = px / 2 + cos(c_a) * 158 * 32 / dy;
-            ty = py / 2 - sin(c_a) * 158 * 32 / dy;
-            int mp = map_f[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
-            int pixel= (((int)(ty)&31)*32 + ((int)(tx)&31))*3+mp*3;
-            int red   =All_Textures[pixel+0]*0.7;
-            int green =All_Textures[pixel+1]*0.7;
-            int blue  =All_Textures[pixel+2]*0.7;
+            int mp = map_f[(int)(ty / 32.0) * map_x + (int)(tx / 32.0)]*32*32;
+            int pixel = (( (int)(ty) & 31) * 32 + ( (int)(tx) & 31)) * 3 + mp * 3;
+            int red   = All_Textures[pixel + 0] * 0.7;
+            int green = All_Textures[pixel + 1] * 0.7;
+            int blue  = All_Textures[pixel + 2] * 0.7;
 
             SDL_SetRenderDrawColor(renderer, red, green , blue, 255);
 
@@ -340,45 +328,28 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
 
             //---draw ceiling---
-            mp=map_c[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
-            pixel=(((int)(ty)&31)*32 + ((int)(tx)&31))*3+mp*3;
-            red   =All_Textures[pixel+0];
-            green =All_Textures[pixel+1];
-            blue  =All_Textures[pixel+2];
+            mp = map_c[(int)(ty / 32.0) * map_x + (int)(tx / 32.0)] * 32 * 32;
+            pixel = (( (int)(ty) & 31) * 32 + ( (int)(tx) & 31)) * 3 + mp * 3;
+            red   = All_Textures[pixel + 0];
+            green = All_Textures[pixel + 1];
+            blue  = All_Textures[pixel + 2];
+
             if(mp > 0)
             {
                 SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
 
                 int x_rect = r * 8 + 530;
-                int y_rect = 320 - y;
+                int y_rect = 640 - y;
                 int w_rect = 8;
                 int h_rect = 8;
 
                 SDL_Rect floor = {x_rect, y_rect, w_rect, h_rect};
                 SDL_RenderFillRect(renderer, &floor);
             }
-            /*
-            SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-
-            SDL_Rect floor = { x_rect, y_rect, w_rect, h_rect};
-            SDL_RenderFillRect(renderer, &floor);
-
-            y_rect = 320 - y_floor;
-            SDL_Rect ceil = { x_rect, y_rect, w_rect, h_rect};
-            SDL_RenderFillRect(renderer, &ceil);
-             */
         }
 
 
-        r_a += DR;
-        if (r_a < 0)
-        {
-            r_a += 2 * PI;
-        }
-        if (r_a > 2 * PI)
-        {
-            r_a -= 2 * PI;
-        }
+        r_a = FixAng(r_a - 0.5);
     }
 }
 
