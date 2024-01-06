@@ -275,7 +275,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
 
         // Draw walls
-        for (int y = 0; y < line_h; y++)
+        int y;
+        for (y = 0; y < line_h; y++)
         {
             int pixel=((int)ty*32+(int)tx)*3+(hmt*32*32*3);
             int red   =All_Textures[pixel+0]*shade;
@@ -298,7 +299,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
         }
 
         // Draw Floors
-        for (int y_floor = line_o + line_h; y_floor < 320; y_floor++) {
+        for (y = line_o + line_h; y < 320; y++) {
         /*
             double dy = y_floor - (320 / 2.0);
             double deg = degToRad(r_a);
@@ -311,7 +312,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
             double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
         */
-            double dy = y_floor - (320 / 2.0), deg=degToRad(r_a), raFix=cos(degToRad(FixAng(p_a - r_a)));
+            double dy = y - (320 / 2.0), deg=degToRad(r_a), raFix=cos(degToRad(FixAng(p_a - r_a)));
             tx = px / 2 + cos(deg) * 158 * 32 / dy / raFix;
             ty = py / 2 - sin(deg) * 158 * 32 / dy/ raFix;
             int mp = map_f[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
@@ -322,8 +323,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
             SDL_SetRenderDrawColor(renderer, red, green , blue, 255);
 
-            int x_rect = r * 8;
-            int y_rect = y_floor;
+            int x_rect = r * 8 + 530;
+            int y_rect = y;
             int w_rect = 8;
             int h_rect = 8;
 
@@ -341,8 +342,8 @@ void draw_rays_3D(SDL_Renderer *renderer)
             {
                 SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
 
-                int x_rect = r * 8;
-                int y_rect = y_floor;
+                int x_rect = r * 8 + 530;
+                int y_rect = 320 - y;
                 int w_rect = 8;
                 int h_rect = 8;
 
