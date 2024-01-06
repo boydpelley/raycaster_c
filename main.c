@@ -64,7 +64,7 @@ int map_c[]=          //ceiling
                 0,0,0,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,
-                0,2,2,4,0,0,0,0,
+                0,2,2,2,0,0,0,0,
                 0,0,2,0,0,0,0,0,
                 0,0,2,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,
@@ -74,7 +74,6 @@ void update_frames()
 {
     frame_2 = SDL_GetTicks();
     fps = (frame_2 - frame_1) / 1000.0;
-    SDL_Delay(1000 / 60);
     frame_1 = SDL_GetTicks();
 }
 
@@ -499,6 +498,8 @@ int main(int argc, char *argv[])
         done = process_events(window);
 
         render_screen(renderer);
+
+        SDL_Delay(1000/ 60);
     }
     return 0;
 }
