@@ -74,11 +74,14 @@ void update_frames()
 {
     frame_2 = SDL_GetTicks();
     fps = (frame_2 - frame_1) / 1000.0;
+    SDL_Delay(1000 / 60);
     frame_1 = SDL_GetTicks();
 }
 
 void updatePlayerPosition()
 {
+    int speed = 100;
+
     int x_offset = (p_d_x < 0) ? -20 : 20;
     int y_offset = (p_d_y < 0) ? -20 : 20;
     int ipx = px / 64.0, ipx_add_xo = (px + x_offset)/64.0, ipx_sub_xo = (px - x_offset)/64.0;
@@ -86,22 +89,22 @@ void updatePlayerPosition()
 
     if (keys.w)
     {
-        if (map_w[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y * fps;
-        if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x * fps;
+        if (map_w[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y * fps * speed;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x * fps * speed;
     }
     if (keys.a) {
-        p_a += 0.2 * fps;
+        p_a += 0.2 * fps * speed;
         p_a = FixAng(p_a);
         p_d_x = cos(degToRad(p_a));
         p_d_y = -sin(degToRad(p_a));
     }
     if (keys.s)
     {
-        if (map_w[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y * 0.2 * fps;
-        if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x * 0.2 * fps;
+        if (map_w[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y * 0.2 * fps * speed;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x * 0.2 * fps * speed;
     }
     if (keys.d) {
-        p_a -= 0.2 * fps;
+        p_a -= 0.2 * fps * speed;
         p_a = FixAng(p_a);
         p_d_x = cos(degToRad(p_a));
         p_d_y = -sin(degToRad(p_a));
