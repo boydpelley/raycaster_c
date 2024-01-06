@@ -17,16 +17,18 @@ typedef struct
 double px, py, p_d_x, p_d_y, p_a;
 double frame_1, frame_2, fps;
 
+double degToRad(float a) { return a*M_PI/180.0;}
+double FixAng(float a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
+
 void init()
 {
     px = 300;
     py = 300;
-    p_d_x = cos(p_a) * 2;
-    p_d_y = sin(p_a) * 2;
+    p_d_x = cos(degToRad(p_a));
+    p_d_y = sin(degToRad(p_a));
 }
 
-float degToRad(float a) { return a*M_PI/180.0;}
-float FixAng(float a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
+
 
 
 int map_x = 8;
@@ -68,10 +70,15 @@ int map_c[]=          //ceiling
                 0,0,0,0,0,0,0,0,
         };
 
+void update_frames()
+{
+    frame_2 = SDL_GetTicks();
+    fps = (frame_2 - frame_1) / 1000.0;
+    frame_1 = SDL_GetTicks();
+}
+
 void updatePlayerPosition()
 {
-
-
     int x_offset = (p_d_x < 0) ? -20 : 20;
     int y_offset = (p_d_y < 0) ? -20 : 20;
     int ipx = px / 64.0, ipx_add_xo = (px + x_offset)/64.0, ipx_sub_xo = (px - x_offset)/64.0;
@@ -79,22 +86,22 @@ void updatePlayerPosition()
 
     if (keys.w)
     {
-        if (map_w[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y;
-        if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x;
+        if (map_w[(int)(ipy_add_yo) * map_x + (int)(ipx)] == 0) py += p_d_y * fps;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_add_xo)] == 0) px += p_d_x * fps;
     }
     if (keys.a) {
-        p_a += 0.2;
+        p_a += 0.2 * fps;
         p_a = FixAng(p_a);
         p_d_x = cos(degToRad(p_a));
         p_d_y = -sin(degToRad(p_a));
     }
     if (keys.s)
     {
-        if (map_w[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y;
-        if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x;
+        if (map_w[(int)(ipy_sub_yo) * map_x + (int)(ipx)] == 0) py -= p_d_y * 0.2 * fps;
+        if (map_w[(int)(ipy) * map_x + (int)(ipx_sub_xo)] == 0) px -= p_d_x * 0.2 * fps;
     }
     if (keys.d) {
-        p_a -= 0.2;
+        p_a -= 0.2 * fps;
         p_a = FixAng(p_a);
         p_d_x = cos(degToRad(p_a));
         p_d_y = -sin(degToRad(p_a));
@@ -380,10 +387,12 @@ void draw_player(SDL_Renderer *renderer)
 
 void render_screen(SDL_Renderer *renderer)
 {
-    // Render a white screen
+    // Render a gray screen
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
 
     SDL_RenderClear(renderer);
+
+    update_frames();
 
     draw_2D_map(renderer);
 
@@ -478,7 +487,7 @@ int main(int argc, char *argv[])
                               0
     );
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     short done = 0;
 
