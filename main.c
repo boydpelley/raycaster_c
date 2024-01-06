@@ -40,17 +40,32 @@ int map_w [] =
                 1,2,1,3,1,1,1,1
         };
 
-int mapF[]=          //floors
+int map_f[]=          //floors
         {
                 0,0,0,0,0,0,0,0,
-                0,0,0,0,1,1,0,0,
-                0,0,0,0,2,0,0,0,
-                0,0,0,0,0,0,0,0,
+                0,0,0,0,2,2,2,0,
+                0,0,0,0,2,0,2,0,
+                0,0,2,0,2,2,2,0,
                 0,0,2,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,
-                0,1,1,1,1,0,0,0,
+                0,0,2,0,2,0,0,0,
+                0,1,1,1,1,0,8,0,
                 0,0,0,0,0,0,0,0,
         };
+
+int map_c[]=          //ceiling
+        {
+                0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,
+                0,2,2,4,0,0,0,0,
+                0,0,2,0,0,0,0,0,
+                0,0,2,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,
+        };
+
+double degToRad(double a) { return a*M_PI/180.0;}
+double FixAng(double a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
 
 void updatePlayerPosition()
 {
@@ -243,9 +258,10 @@ void draw_rays_3D(SDL_Renderer *renderer)
             ty_offset = (line_h - 320) / 2;
             line_h = 320;
         }
-        double line_o = 160 - line_h / 2;
 
-        double ty = ty_offset * ty_step + hmt * 32;
+        int line_o = 160 - ((int)line_h >> 1);
+
+        double ty = ty_offset * ty_step;
         double tx;
         if (shade == 1)
         {
@@ -295,11 +311,45 @@ void draw_rays_3D(SDL_Renderer *renderer)
 
             double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
         */
-            int x_rect = r * 8 + 530;
+            double dy = y_floor - (320 / 2.0), deg=degToRad(r_a), raFix=cos(degToRad(FixAng(p_a - r_a)));
+            tx = px / 2 + cos(deg) * 158 * 32 / dy / raFix;
+            ty = py / 2 - sin(deg) * 158 * 32 / dy/ raFix;
+            int mp = map_f[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
+            int pixel= (((int)(ty)&31)*32 + ((int)(tx)&31))*3+mp*3;
+            int red   =All_Textures[pixel+0]*0.7;
+            int green =All_Textures[pixel+1]*0.7;
+            int blue  =All_Textures[pixel+2]*0.7;
+
+            SDL_SetRenderDrawColor(renderer, red, green , blue, 255);
+
+            int x_rect = r * 8;
             int y_rect = y_floor;
             int w_rect = 8;
             int h_rect = 8;
 
+            SDL_Rect floor = { x_rect, y_rect, w_rect, h_rect};
+            SDL_RenderFillRect(renderer, &floor);
+
+
+            //---draw ceiling---
+            mp=map_c[(int)(ty/32.0)*map_x+(int)(tx/32.0)]*32*32;
+            pixel=(((int)(ty)&31)*32 + ((int)(tx)&31))*3+mp*3;
+            red   =All_Textures[pixel+0];
+            green =All_Textures[pixel+1];
+            blue  =All_Textures[pixel+2];
+            if(mp > 0)
+            {
+                SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
+
+                int x_rect = r * 8;
+                int y_rect = y_floor;
+                int w_rect = 8;
+                int h_rect = 8;
+
+                SDL_Rect floor = {x_rect, y_rect, w_rect, h_rect};
+                SDL_RenderFillRect(renderer, &floor);
+            }
+            /*
             SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 
             SDL_Rect floor = { x_rect, y_rect, w_rect, h_rect};
@@ -308,6 +358,7 @@ void draw_rays_3D(SDL_Renderer *renderer)
             y_rect = 320 - y_floor;
             SDL_Rect ceil = { x_rect, y_rect, w_rect, h_rect};
             SDL_RenderFillRect(renderer, &ceil);
+             */
         }
 
 
