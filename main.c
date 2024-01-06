@@ -313,14 +313,12 @@ void draw_rays_3D(SDL_Renderer *renderer)
             double c = all_textures[((int)(ty)&31) * 32 + ((int)(tx)&31) + mp] * 200;
         */
             double dy = y - (320 / 2.0);
-            double c_a = p_a - r_a;
-            if (c_a < 0)
-            {
+            c_a = atan2(ty, tx) + p_a - r_a;
+
+// Normalize the angle to the [0, 2 * PI) range
+            c_a = fmod(c_a, 2 * PI);
+            if (c_a < 0) {
                 c_a += 2 * PI;
-            }
-            if (c_a > 2 * PI)
-            {
-                c_a -= 2 * PI;
             }
             tx = px / 2 + cos(c_a) * 158 * 32 / dy;
             ty = py / 2 - sin(c_a) * 158 * 32 / dy;
